@@ -5,15 +5,6 @@ RUN apt-get update && apt-get install -y \
     git wget \
     debhelper devscripts
 
-# To provide support for Raspberry Pi Zero W a toolchain tuned for ARMv6 architecture must be used.
-# https://tracker.mender.io/browse/MEN-2399
-# Assumes $(pwd) is /
-RUN wget -nc -q https://toolchains.bootlin.com/downloads/releases/toolchains/armv6-eabihf/tarballs/armv6-eabihf--glibc--stable-2018.11-1.tar.bz2 \
-    && tar -xjf armv6-eabihf--glibc--stable-2018.11-1.tar.bz2 \
-    && rm armv6-eabihf--glibc--stable-2018.11-1.tar.bz2
-ENV CROSS_COMPILE "arm-buildroot-linux-gnueabihf"
-ENV CC "$CROSS_COMPILE-gcc"
-ENV PATH "$PATH:/armv6-eabihf--glibc--stable-2018.11-1/bin"
 
 # Golang environment, for cross-compiling the Mender client
 ARG GOLANG_VERSION=1.11.5
@@ -26,7 +17,7 @@ ENV PATH "$PATH:/usr/local/go/bin"
 RUN wget -q https://tukaani.org/xz/xz-5.2.4.tar.gz \
     && tar -C /root -xzf xz-5.2.4.tar.gz \
     && cd /root/xz-5.2.4 \
-    && ./configure --host=$CROSS_COMPILE --prefix=/root/xz-5.2.4/install \
+    && ./configure --prefix=/root/xz-5.2.4/install \
     && make \
     && make install
 ENV LIBLZMA_INSTALL_PATH "/root/xz-5.2.4/install"
