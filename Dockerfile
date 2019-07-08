@@ -2,18 +2,12 @@ FROM debian:stretch
 
 RUN apt-get update && apt-get install -y \
     build-essential \
-    git wget \
+    git wget gcc-aarch64-linux-gnu \
     debhelper devscripts
 
-# To provide support for Raspberry Pi Zero W a toolchain tuned for ARMv6 architecture must be used.
-# https://tracker.mender.io/browse/MEN-2399
-# Assumes $(pwd) is /
-RUN wget -nc -q https://toolchains.bootlin.com/downloads/releases/toolchains/armv6-eabihf/tarballs/armv6-eabihf--glibc--stable-2018.11-1.tar.bz2 \
-    && tar -xjf armv6-eabihf--glibc--stable-2018.11-1.tar.bz2 \
-    && rm armv6-eabihf--glibc--stable-2018.11-1.tar.bz2
-ENV CROSS_COMPILE "arm-buildroot-linux-gnueabihf"
+
+ENV CROSS_COMPILE "aarch64-linux-gnu"
 ENV CC "$CROSS_COMPILE-gcc"
-ENV PATH "$PATH:/armv6-eabihf--glibc--stable-2018.11-1/bin"
 
 # Golang environment, for cross-compiling the Mender client
 ARG GOLANG_VERSION=1.11.5
